@@ -1,5 +1,5 @@
 ---
 - name: install tomcat
-  yum: name=tomcat state=installed
+  yum: name=tomcat state=removed
   when: ansible_os_family == 'RedHat'
   notify: start tomcat
