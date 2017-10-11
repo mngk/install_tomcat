@@ -1,5 +1,39 @@
 ---
-- name: install tomcat
-  yum: name=tomcat state=installed
+- name: install java
+  yum: name=java-1.7.0-openjdk-devel state=installed
   when: ansible_os_family == 'RedHat'
-  notify: start tomcat
+
+- name: add group tomcat
+  group:
+    name: tomcat
+    state: present
+
+- name: add user tomcat
+  user:
+    name: tomcat
+    shell: /bin/nologin
+    group: tomcat
+    home: /opt/tomcat
+
+- name: download tomcat
+  get_url:
+    url: http://redrockdigimark.com/apachemirror/tomcat/tomcat-8/v8.5.23/bin/apache-tomcat-8.5.23.tar.gz
+    dest: /tmp
+
+- name: create directory
+  file:
+    dest: /opt/tomcat
+    state: directory
+    group: tomcat
+    recurse: yes
+
+- name: extract tomcat tar file
+  unarchive:
+    src: /tmp/apache-tomcat-8.5.23.tar.gz
+    dest: /opt/tomcat
+
+- name: set permissions
+  file:
+    dest: /opt/tomcat/conf
+    mode: g+r
+
